@@ -5,30 +5,34 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class Program
 {
-    private DiscordSocketClient _client;
-    private LoggingService _loggingService;
-    private CommandService _commands;
-    private IServiceProvider _services;
-    private CommandHandler _commandHandler;
+    private DiscordSocketClient? _client;
+    private LoggingService? _loggingService;
+    private CommandService? _commands;
+    private IServiceProvider? _services;
+    private CommandHandler? _commandHandler;
 
     public static Task Main(string[] args) => new Program().MainAsync();
 
     public async Task MainAsync()
     {
+        //Gateway intents
         var config = new DiscordSocketConfig{
             GatewayIntents =  GatewayIntents.MessageContent | GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.AllUnprivileged
         };
-        
+
         _client = new DiscordSocketClient(config);
         _commands = new CommandService();
         _loggingService = new LoggingService(_client, _commands);
-        _commandHandler = new CommandHandler(_client, _commands, _services);
-        
 
         _services = new ServiceCollection()
             .AddSingleton(_client)
             .AddSingleton(_commands)
             .BuildServiceProvider();
+
+        _commandHandler = new CommandHandler(_client, _commands, _services);
+        
+
+        
         
         // Create a bot.env file with BOT_TOKEN having the token id from discord dev portal
         DotNetEnv.Env.Load("./bot.env");
