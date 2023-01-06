@@ -18,19 +18,12 @@ public class CommandHandler
     
     public async Task InstallCommandsAsync()
     {
+        Console.WriteLine("I was here");
         // Hook the MessageReceived event into our command handler
         _client.MessageReceived += HandleCommandAsync;
 
-        // Here we discover all of the command modules in the entry 
-        // assembly and load them. Starting from Discord.NET 2.0, a
-        // service provider is required to be passed into the
-        // module registration method to inject the 
-        // required dependencies.
-        //
-        // If you do not use Dependency Injection, pass null.
-        // See Dependency Injection guide for more information.
-        await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), 
-                                        _services);
+        // Here we discover all of the command modules in the entry assembly and load them.
+        await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
     }
 
     private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -53,9 +46,8 @@ public class CommandHandler
 
         // Execute the command with the command context we just
         // created, along with the service provider for precondition checks.
-        await _commands.ExecuteAsync(
-            context: context, 
-            argPos: argPos,
-            services: null);
+        var result = await _commands.ExecuteAsync(context, argPos, _services);
+        if (!result.IsSuccess) Console.WriteLine(result.ErrorReason);
+        if (result.Error.Equals(CommandError.UnmetPrecondition)) await message.Channel.SendMessageAsync(result.ErrorReason);
     }
 }

@@ -4,10 +4,10 @@ using Discord.WebSocket;
 
 public class LoggingService
 {
-	public LoggingService(DiscordSocketClient client)
+	public LoggingService(DiscordSocketClient client, CommandService command)
 	{
 		client.Log += LogAsync;
-		// command.Log += LogAsync;
+		command.Log += LogAsync;
 	}
 	private Task LogAsync(LogMessage message)
 	{
