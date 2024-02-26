@@ -1,5 +1,7 @@
 # bot-0x
  Bot Zero X
+ 
+Simple bot for discord using c# and .net .
 
 Dependencies
 
